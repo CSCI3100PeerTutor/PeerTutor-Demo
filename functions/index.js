@@ -17,6 +17,12 @@ const firebaseConfig = {
     appId: "1:15916059974:web:b6e59a0285e26c1352a947",
     measurementId: "G-MQMENTLBV3"
   };
+  
+  // check whether a string is empty
+const isEmpty = (string) => {
+    if(string.trim() === '') return true;
+    else return false;
+};
 
 const firebase = require('firebase');
 firebase.initializeApp(firebaseConfig);
@@ -41,10 +47,10 @@ app.get('/posts', (req, res) => {
 // publishing a post
 
 app.post('/posts', (req, res) => {
-    if(req.body.description.trim()=== '') {
+    if(isEmpty(req.body.description)) {
         return res.status(400).json({ body: 'description must not be empty'});
     }
-    if(req.body.course.trim()=== '') {
+    if(isEmpty(req.body.course)) {
         return res.status(400).json({ body: 'course must not be empty'});
     }
 
@@ -68,11 +74,7 @@ app.post('/posts', (req, res) => {
         });
 });
 
-// check whether a string is empty
-const isEmpty = (string) => {
-    if(string.trim() === '') return true;
-    else return false;
-};
+
 
 // this regex needs to be updated so that only CUHK emails are accepted
 // for instance xxxxxxxxxx@link.cuhk.edu.hk
