@@ -50,7 +50,7 @@ app.post('/posts', (req, res) => {
 
     const newPosts = {
         description: req.body.description,
-        name: req.body.name,
+        userName: req.body.userName,
         createdAt: new Date().toISOString(),
         type: req.body.type,
         course: req.body.course
@@ -82,7 +82,98 @@ const isEmail = (email) => {
     else return false;
 };
 
+// Signup route
+app.post('/signup', (req, res) => {
+    //for testing purpose, the newUser does not have all of its attributes yet
+    const newUser = {
+        email: req.body.email,
+        password: req.body.password,
+        confirmPassword: req.body.confirmPassword,
+        name: req.body.name
+    };
 
+    let errors =  {};
+
+    if(isEmpty(newUser.email)) {
+        errors.email = 'Email must not be empty'
+    } else if(!isEmail(newUser.email)){
+        errors.email = 'Must be a valid email address'
+    };
+
+    if(isEmpty(newUser.password)) errors.password = 'Must not be empty';
+    if(newUser.password !== newUser.confirmPassword) errors.confirmPassword = 'Passwords must match';
+    if(isEmpty(newUser.name)) errors.name = 'Must not be empty';
+
+    if(Object.keys(errors).length > 0) return res.status(400).json(errors);
+    
+
+    // TODO: validate data
+    let token, userId;
+    db.doc(`/users/${newUser.name}`)
+        .get()
+        .then((doc) => {
+            if(doc.exists){ // bad request, cannot have duplicate handles
+                return res.status(400).json({ name: 'this name is already taken' });
+            } else {
+                return firebase
+                .auth()
+                .createUserWithEmailAndPassword(newUser.email, newUser.password);
+            }
+        })
+        .then((data) => {
+            userId = data.user.uid;
+            return data.user.getIdToken();
+        })
+        .then((idToken) => {
+            token = idToken;
+            const userCredentials = {
+                name: newUser.name,
+                email: newUser.email,
+                createdAt: new Date().toISOString(),
+                userId
+            };
+            return db.doc(`/users/${newUser.name}`).set(userCredentials);
+        })
+        .then(() => {
+            return res.status(201).json({ token });
+        })
+        .catch((err) => {
+            console.error(err);
+            if(err.code === 'auth/email-already-in-use'){
+                return res.status(400).json({ email: 'Email is already in use'})
+            } else {
+                return res.status(500).json({ error: err.code });
+            }
+        }); 
+});
+// login page
+app.post('/login', (req,res) => {
+    const user = {
+        email: req.body.email,
+        password: req.body.password
+    };
+
+    let errors = {};
+
+    if(isEmpty(user.email)) errors.email = 'Must not be empty';
+    if(isEmpty(user.password)) errors.password = 'Must not be empty';
+
+    if(Object.keys(errors).length > 0) return res.status(400).json(errors);
+
+    firebase
+    .auth()
+    .signInWithEmailAndPassword(user.email, user.password)
+    .then((data) => {
+        return data.getIdToken();
+    })
+    .then((token) => {
+        return res.json({ token });
+    })
+    .catch((err) => {
+        console.error(err);
+        return res.status(500).json({ error: err.code }); 
+    })
+})
 
 exports.api = functions.https.onRequest(app);
 // funtions.region('') to change the region to reduce latency
