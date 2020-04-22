@@ -32,33 +32,17 @@ exports.getPosts = (req, res) => {
 
 // information is sent by the user via req
 exports.createPosts = (req, res, next) => {
-    let form = new formidable.IncomingForm() // now expects form data
-    form.keepExtensions = true;
-    form.parse(req, (err, fields, files) => {
+    const post = new Post(req.body);
+    console.log("creating post: ", req.body)
+    post.postedBy = req.profile;
+    post.save((err, result) => {
         if(err) {
             return res.status(400).json({
-                error: "Image could not be uploaded"
+                error: err
             })
         }
-        let post = new Post(fields)
-        // remove sensitive fields from req.profile
-        req.profile.hashed_password = undefined;
-        req.profile.salt = undefined;
-
-        post.postedBy = req.profile;
-        if(files.photo) { // if file has photo
-            post.photo.data = fs.readFileSync(files.photo.path);
-            post.photo.contentType = files.photo.type;
-        }
-        post.save((err, result) => {
-            if(err) {
-                return res.status(400).json({
-                    error: err
-                })
-            }
-            res.json(result)
-        });
-    });
+        return res.json(post)
+    })
 };
 
 // find all the posts by one user
