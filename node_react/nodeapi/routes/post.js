@@ -1,12 +1,13 @@
 const express = require("express");
-const { getPosts, createPosts, postByUser, postById, isPoster, deletePost, updatePost, singlePost} = require("../controllers/post"); // deconstructed so that only need function name
+const { getPosts, createPosts, postByUser, postById, isPoster, deletePost, updatePost, singlePost, comment, uncomment} = require("../controllers/post"); // deconstructed so that only need function name
 const { requireSignin } = require("../controllers/auth");
 const { userById } = require("../controllers/user");
 const {createPostValidator} = require("../validators/index");
 const router = express.Router();
 
 // Comment routes
-
+router.put("/post/comment", requireSignin, comment)
+router.put("/post/uncomment", requireSignin, uncomment)
 
 router.get("/posts", getPosts);
 router.get("/post/:postId", singlePost)
