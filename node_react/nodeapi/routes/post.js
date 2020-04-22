@@ -5,6 +5,8 @@ const { userById } = require("../controllers/user");
 const {createPostValidator} = require("../validators/index");
 const router = express.Router();
 
+// Comment routes
+
 
 router.get("/posts", getPosts);
 router.get("/post/:postId", singlePost)
