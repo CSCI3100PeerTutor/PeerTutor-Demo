@@ -88,6 +88,7 @@ exports.updatePost = (req, res, next) => {
                 error: err
             })
         }
+        console.log("Post updated: ", post)
         return res.json(post);
     })
 }
