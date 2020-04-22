@@ -141,7 +141,7 @@ exports.comment = (req,res) => {
 }
 
 exports.uncomment = (req,res) => {
-    comment.postedBy = req.body.userId
+    let comment = req.body.comment;
 
     Post.findByIdAndUpdate(req.body.postId, 
         // pull comment
