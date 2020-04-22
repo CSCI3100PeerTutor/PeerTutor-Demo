@@ -22,9 +22,10 @@ exports.postById = (req, res, next, id) => {
 exports.getPosts = (req, res) => {
     const posts = Post.find()
     .populate("postedBy", "_id name") // since postedBy is a ObjectId
-    .select("_id title body") // since we do not want the __v variable
+    .select("_id title body created") // since we do not want the __v variable
+    .sort({created: -1}) // lasted post will come first 
     .then((posts) => {
-        res.status(200).json({ posts })
+        res.status(200).json(posts)
     })
     .catch(err => console.log(err));
 };
@@ -35,6 +36,7 @@ exports.createPosts = (req, res, next) => {
     const post = new Post(req.body);
     console.log("creating post: ", req.body)
     post.postedBy = req.profile;
+    post.created = Date.now()
     post.save((err, result) => {
         if(err) {
             return res.status(400).json({
@@ -103,3 +105,7 @@ exports.deletePost = (req, res) => {
         })
     })
 };
+
+exports.singlePost = (req, res) => {
+    return res.json(req.post)
+}

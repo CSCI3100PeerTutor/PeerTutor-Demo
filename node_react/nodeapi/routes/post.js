@@ -1,5 +1,5 @@
 const express = require("express");
-const { getPosts, createPosts, postByUser, postById, isPoster, deletePost, updatePost} = require("../controllers/post"); // deconstructed so that only need function name
+const { getPosts, createPosts, postByUser, postById, isPoster, deletePost, updatePost, singlePost} = require("../controllers/post"); // deconstructed so that only need function name
 const { requireSignin } = require("../controllers/auth");
 const { userById } = require("../controllers/user");
 const {createPostValidator} = require("../validators/index");
@@ -7,6 +7,7 @@ const router = express.Router();
 
 
 router.get("/posts", getPosts);
+router.get("/post/:postId", singlePost)
 // only when user is signed in && validation is passed the next middleware will be called
 router.post("/post/new/:userId", requireSignin, createPosts, createPostValidator);
 router.get("/posts/by/:userId", requireSignin, postByUser);
