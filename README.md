@@ -1,6 +1,6 @@
 # PeerTutor
 
-PeerTutor project for Group 1 (although upon writing this I am not sure about the group part) CSCI3100 
+PeerTutor project for Group 1 CSCI3100 
 
 ## Installation
 
