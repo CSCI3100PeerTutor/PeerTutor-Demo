@@ -23,6 +23,7 @@ mongoose.connection.on("error", err => {
 const postRoutes = require("./routes/post"); // protected route
 const authRoutes = require("./routes/auth"); // public route
 const userRoutes = require("./routes/user"); // public route 
+const appointmentRoutes = require("./routes/appointment");
 // apiDocs
 app.get("/", (req, res) => {
   fs.readFile("docs/apiDocs.json", (err, data) => {
@@ -45,6 +46,8 @@ app.use(cors()); // allow communication between frontend and backend (since fron
 app.use("/", postRoutes); 
 app.use("/", authRoutes);
 app.use("/", userRoutes);
+app.use("/", appointmentRoutes)
+
 app.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
       res.status(401).json({error: "Unauthorized" });
