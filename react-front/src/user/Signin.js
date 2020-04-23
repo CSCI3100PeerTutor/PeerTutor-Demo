@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 import {signin, authenticate} from "../auth"
 
 export default class Signin extends Component {
@@ -77,7 +77,7 @@ export default class Signin extends Component {
             </div>
             <button 
             onClick= {this.clickSubmit} 
-            className="btn btn-raised btn-primary"
+            className="btn btn-raised btn-secondary"
             >
                 Submit
             </button>
@@ -94,6 +94,7 @@ export default class Signin extends Component {
         }
 
         return (
+
             <div className="container">
                 <h2 className="mt-5 mb-5">Sign in</h2>
 
@@ -105,6 +106,12 @@ export default class Signin extends Component {
                 {/* form for signup, refer to function above */} 
                 {this.signinForm(email, password)}
 
+                <p>
+                <Link to="/forgot-password" className="text-danger">
+                    {" "}
+                    Forgot Password
+                </Link>
+                </p>
             </div>
         );
     }

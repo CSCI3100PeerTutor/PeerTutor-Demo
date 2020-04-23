@@ -151,8 +151,6 @@ export default class EditProfile extends Component {
             return <Redirect to={`/user/${id}`} />
         }
 
-        
-
         return (
             <div className="container">
                 <h2 className="mt-5 mb-5">Edit Profile</h2>
@@ -162,6 +160,10 @@ export default class EditProfile extends Component {
                 </div>
 
                 {this.signupForm(name, email, password, about)}
+
+                {isAuthenticated().user.role === "admin" ||
+                    (isAuthenticated().user._id === id &&
+                    this.signupForm(name, email, password, about))}
             </div>
         )
     }

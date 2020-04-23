@@ -11,8 +11,8 @@ import NewPost from "./post/NewPost"
 import SinglePost from "./post/SinglePost"
 import EditPost from "./post/EditPost"
 import PrivateRoute from "./auth/PrivateRoute"
-
-
+import ResetPassword from "./user/ResetPassword";
+import ForgotPassword from "./user/ForgotPassword";
 
 const MainRouter = () => (
     <div>
@@ -29,6 +29,8 @@ const MainRouter = () => (
             <PrivateRoute exact path="/user/:userId" component={Profile}></PrivateRoute>
             <PrivateRoute exact path="/post/create" component={NewPost}></PrivateRoute>
             <Route exact path="/post/:postId" component={SinglePost}></Route>
+            <Route exact path="/reset-password/:resetPasswordToken" component={ResetPassword}/>
+            <Route exact path="/forgot-password" component={ForgotPassword} />
         </Switch>
     </div>
 )

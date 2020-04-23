@@ -22,17 +22,45 @@ exports.postById = (req, res, next, id) => {
 };
 
 // returns all the post from database
-exports.getPosts = (req, res) => {
-    const posts = Post.find()
-    .populate("postedBy", "_id name") // since postedBy is a ObjectId
-    .populate("comments", "text created")
-    .populate("comments.postedBy", "_id name")
-    .select("_id title body created") // since we do not want the __v variable
-    .sort({created: -1}) // lasted post will come first 
-    .then((posts) => {
-        res.status(200).json(posts)
-    })
-    .catch(err => console.log(err));
+// exports.getPosts = (req, res) => {
+//     const posts = Post.find()
+//     .populate("postedBy", "_id name") // since postedBy is a ObjectId
+//     .populate("comments", "text created")
+//     .populate("comments.postedBy", "_id name")
+//     .select("_id title body created") // since we do not want the __v variable
+//     .sort({created: -1}) // lasted post will come first 
+//     .then((posts) => {
+//         res.status(200).json(posts)
+//     })
+//     .catch(err => console.log(err));
+// };
+
+// Pagination: 3 posts per page
+exports.getPosts = async (req, res) => {
+    // get current page from req.query or use default value of 1
+    const currentPage = req.query.page || 1;
+    // return 3 posts per page
+    const perPage = 6;
+    let totalItems;
+ 
+    const posts = await Post.find()
+        // countDocuments() gives you total count of posts
+        .countDocuments()
+        .then(count => {
+            totalItems = count;
+            return Post.find()
+                .skip((currentPage - 1) * perPage)
+                .populate("comments", "text created")
+                .populate("comments.postedBy", "_id name")
+                .populate("postedBy", "_id name")
+                .sort({ date: -1 })
+                .limit(perPage)
+                .select("_id title body likes");
+        })
+        .then(posts => {
+            res.status(200).json(posts);
+        })
+        .catch(err => console.log(err));
 };
 
 
