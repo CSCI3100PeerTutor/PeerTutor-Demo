@@ -30,7 +30,11 @@ const postSchema = new mongoose.Schema({
             created: {type: Date, default: Date.now},
             postedBy: {type: ObjectId, ref: "User"}
         }
-    ]
+    ],
+    postType: {
+        type: String,
+        required: true
+    }
 })
 
 module.exports = mongoose.model("Post", postSchema);

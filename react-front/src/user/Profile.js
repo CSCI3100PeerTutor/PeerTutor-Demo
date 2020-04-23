@@ -7,6 +7,7 @@ import DeleteUser from './DeleteUser'
 import FollowProfileButton from "./FollowProfileButton"
 import ProfileTabs from "./ProfileTabs"
 import {listByUser} from "../post/apiPost"
+import Review from "./Review"
 
 export default class Profile extends Component {
 
@@ -17,7 +18,8 @@ export default class Profile extends Component {
             redirectToSignin: false,
             following: false,
             error: "",
-            posts: []
+            posts: [],
+            reviews: []
         }
     }
 
@@ -86,9 +88,13 @@ export default class Profile extends Component {
         this.init(userId);
     }
 
+    updateReviews = reviews => {
+        this.setState({reviews})
+    }
+
     render() {
         // redirect to sign in page
-        const {redirectToSignin, user, posts} = this.state;
+        const {redirectToSignin, user, posts, reviews} = this.state;
         if(redirectToSignin) return <Redirect to="/signin" />
 
         return (
@@ -119,10 +125,13 @@ export default class Profile extends Component {
                             <DeleteUser userId={user._id}/>
                         </div>
                     ) : (
+                        <>
                         <FollowProfileButton 
                             following={this.state.following}
                             onButtonClick={this.clickFollowButton}
                         />
+                        
+                        </>
                     )}
 
                     
@@ -140,6 +149,16 @@ export default class Profile extends Component {
                         following={user.following} 
                         posts={posts}
                         />
+                        {/** if the profile is the user's own profile, do not display review component */}
+                        {isAuthenticated().user && (isAuthenticated().user._id === user._id) ? (
+                            <hr/>
+                        ) : (
+                            <Review 
+                            userId={user._id} 
+                            reviews={reviews} 
+                            updateReviews={this.updateReviews} 
+                            />
+                        )}    
                     </div>
                 </div>
             </div>

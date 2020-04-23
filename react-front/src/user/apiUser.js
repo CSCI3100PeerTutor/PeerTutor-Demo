@@ -101,3 +101,34 @@ export const unfollow = (userId, token, unfollowId) => {
     .catch(err => console.log(err))
 }
 
+export const review = (userId, token, review) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/user/review`, {
+        method: "PUT",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId, review })
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => console.log(err));
+};
+
+export const unreview = (userId, token, review) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/user/unreview`, {
+        method: "PUT",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId, review })
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => console.log(err));
+};

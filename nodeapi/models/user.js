@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { v4: uuidv4 } = require('uuid');
 const crypto = require("crypto");
 const {ObjectId} = mongoose.Schema;
+const Post = require("./post");
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -33,7 +34,14 @@ const userSchema = new mongoose.Schema({
     resetPasswordLink: {
         data: String,
         default: ""
-    }
+    },
+    reviews: [
+        {
+            text: String,
+            created: {type: Date, default: Date.now},
+            postedBy: {type: ObjectId, ref: "User"}
+        }
+    ]
 })
 
 /**
@@ -74,5 +82,11 @@ const userSchema = new mongoose.Schema({
         }
     }
  }
+
+// pre middleware (deletes user's post when user removes itself)
+userSchema.pre("remove", function(next) {
+    Post.remove({ postedBy: this._id }).exec();
+    next();
+});
 
 module.exports = mongoose.model("User", userSchema);

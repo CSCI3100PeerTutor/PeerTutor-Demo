@@ -10,6 +10,7 @@ class EditPost extends Component {
             id: "",
             title: "",
             body: "",
+            postType: "",
             redirectToProfile: false,
             error: "",
         };
@@ -25,6 +26,7 @@ class EditPost extends Component {
                     id: data.postedBy._id,
                     title: data.title,
                     body: data.body,
+                    postType: data.postType,
                     error: ""
                 });
             }
@@ -38,10 +40,18 @@ class EditPost extends Component {
     }
 
     isValid = () => {
-        const { title, body } = this.state;
+        const { title, body, postType} = this.state;
         if (title.length === 0 || body.length === 0) {
             this.setState({ error: "All fields are required", loading: false });
             return false;
+        }
+        if(title.length > 20) {
+            this.setState({error: "Subject must be less than 20 characters"})
+            return false
+        }
+        if(postType !== "teach" && postType !== "learn") {
+            this.setState({error: "type must be either teach or learn"})
+            return false
         }
         return true;
     };
@@ -55,10 +65,11 @@ class EditPost extends Component {
 
     clickSubmit = event => {
         event.preventDefault();
-        const {title, body} = this.state
+        const {title, body, postType} = this.state
         const post = {
             title,
-            body
+            body,
+            postType
         }
         if (this.isValid()) {
             const postId = this.props.match.params.postId;
@@ -70,6 +81,7 @@ class EditPost extends Component {
                     this.setState({
                         title: "",
                         body: "",
+                        postType: "",
                         redirectToProfile: true
                     });
                 }
@@ -77,7 +89,7 @@ class EditPost extends Component {
         }
     };
 
-    editPostForm = (title, body) => (
+    editPostForm = (title, body, postType) => (
         <form>
             <div className="form-group">
                 <label className="text-muted">Title</label>
@@ -86,6 +98,16 @@ class EditPost extends Component {
                     type="text"
                     className="form-control"
                     value={title}
+                />
+            </div>
+
+            <div className='form-group'>
+                <label className='text-muted'>Post Type (teach/learn)</label>
+                <input 
+                    onChange= {this.handleChange("postType")} 
+                    type="text" 
+                    className="form-control"
+                    value={postType}
                 />
             </div>
 
@@ -113,6 +135,7 @@ class EditPost extends Component {
             id,
             title,
             body,
+            postType,
             redirectToProfile,
             error,
         } = this.state;
@@ -133,14 +156,14 @@ class EditPost extends Component {
                 </div>
 
                 {isAuthenticated().user.role === "admin" &&
-                    this.editPostForm(title, body)}
+                    this.editPostForm(title, body, postType)}
 
                 {isAuthenticated().user._id === id &&
-                    this.editPostForm(title, body)}
+                    this.editPostForm(title, body, postType)}
 
                 {isAuthenticated().user.role === "admin" ||
                     (isAuthenticated().user._id === id &&
-                        this.editPostForm(title, body))}
+                        this.editPostForm(title, body, postType))}
             </div>
         );
     }

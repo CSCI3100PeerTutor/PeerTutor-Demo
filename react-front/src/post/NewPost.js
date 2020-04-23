@@ -10,6 +10,7 @@ export default class NewPost extends Component {
         this.state = {
             title: "",
             body: "",
+            postType: "",
             error: "",
             user: {},
             redirectToProfile: false
@@ -24,10 +25,18 @@ export default class NewPost extends Component {
 
     // client side validation, check for input
     isValid = () => {
-        const {title, body} = this.state
+        const {title, body, postType} = this.state
         // empty name
         if(title.length === 0 || body.length === 0) {
             this.setState({error: "All fields are required"})
+            return false
+        }
+        if(title.length > 20) {
+            this.setState({error: "Subject must be less than 20 characters"})
+            return false
+        }
+        if(postType !== "teach" && postType !== "learn") {
+            this.setState({error: "type must be either teach or learn"})
             return false
         }
         return true
@@ -43,10 +52,11 @@ export default class NewPost extends Component {
     // take the data from this.state and send it to backend
     clickSubmit = event => {
         event.preventDefault();
-        const {title, body} = this.state
+        const {title, body, postType} = this.state
         const post = {
             title,
-            body
+            body,
+            postType
         }
         if (this.isValid()) {
             const userId = isAuthenticated().user._id;
@@ -56,22 +66,32 @@ export default class NewPost extends Component {
                 if (data.error) {
                 this.setState({ error: data.error });
                 } else {
-                    this.setState({title: "", body: "", redirectToProfile: true})
+                    this.setState({title: "", body: "", postType: "", redirectToProfile: true})
                 };
                 })
           }
       }
     
 
-    newPostForm = (title, body) => (
+    newPostForm = (title, body, postType) => (
         <form>
             <div className='form-group'>
-                <label className='text-muted'>Title</label>
+                <label className='text-muted'>Subject</label>
                 <input 
                     onChange= {this.handleChange("title")} 
                     type="text" 
                     className="form-control"
                     value={title}
+                />
+            </div>
+
+            <div className='form-group'>
+                <label className='text-muted'>Post Type (teach/learn)</label>
+                <input 
+                    onChange= {this.handleChange("postType")} 
+                    type="text" 
+                    className="form-control"
+                    value={postType}
                 />
             </div>
         
@@ -95,7 +115,7 @@ export default class NewPost extends Component {
 
 
     render() {
-        const { title, body, user, error, redirectToProfile} = this.state;
+        const { title, body, postType, error, redirectToProfile} = this.state;
 
         if(redirectToProfile) {
             return <Redirect to={`/user/${isAuthenticated().user._id}`} />
@@ -111,7 +131,7 @@ export default class NewPost extends Component {
                 > 
                     {error}
                 </div>
-                {this.newPostForm(title, body)}
+                {this.newPostForm(title, body, postType)}
             </div>
         )
     }

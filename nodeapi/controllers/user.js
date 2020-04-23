@@ -7,6 +7,9 @@ exports.userById = (req, res, next, id) => {
     // populate follower and following array
     .populate('following', '_id name')
     .populate('followers', '_id name')
+    // ERROR: cannot populate the reviews array
+    .populate("reviews", "text")
+    .populate('reviews.postedBy', '_id name')
     .exec((err, user) => {
         if(err || !user) {
             return res.status(400).json({ 
@@ -164,4 +167,50 @@ exports.findPeople = (req, res) => {
         }
         res.json(users)
     }).select("name")// only need to send name
+}
+
+exports.review = (req,res) => {
+    // needs review, userId and postId from frontend
+    let review = req.body.review
+    review.postedBy = req.body.userId
+
+    User.findByIdAndUpdate(req.body.userId, 
+        // push review into reviews array
+        { $push: { reviews: review } }, 
+        { new: true })
+        // populate these fields
+        .populate('reviews.postedBy', '_id name')
+        .populate('postedBy', '_id name')
+        .exec((err, result) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            } else {
+                res.json(result);
+            }
+        });
+
+}
+
+exports.unreview = (req,res) => {
+    let review = req.body.review;
+
+    User.findByIdAndUpdate(req.body.userId, 
+        // pull review
+        { $pull: { reviews: {_id: review._id} } }, 
+        { new: true })
+        // populate these fields
+        .populate('reviews.postedBy', '_id name')
+        .populate('postedBy', '_id name')
+        .exec((err, result) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            } else {
+                res.json(result);
+            }
+        });
+
 }

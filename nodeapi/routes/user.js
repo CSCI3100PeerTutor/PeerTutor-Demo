@@ -1,7 +1,11 @@
 const express = require("express");
-const { userById, allUsers, getUser, updateUser, deleteUser, hasAuthorization, addFollowing, addFollower, removeFollower, removeFollowing, findPeople} = require("../controllers/user");
+const { userById, allUsers, getUser, updateUser, deleteUser, hasAuthorization, addFollowing, addFollower, removeFollower, removeFollowing, findPeople, review, unreview} = require("../controllers/user");
 const router = express.Router();
 const { requireSignin } = require("../controllers/auth");
+
+// review route
+router.put("/user/review", requireSignin, review)
+router.put("/user/unreview", requireSignin, unreview)
 
 router.put("/user/follow", requireSignin, addFollowing, addFollower);
 router.put("/user/unfollow", requireSignin, removeFollowing, removeFollower);

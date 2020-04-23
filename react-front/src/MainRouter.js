@@ -13,6 +13,7 @@ import EditPost from "./post/EditPost"
 import PrivateRoute from "./auth/PrivateRoute"
 import ResetPassword from "./user/ResetPassword";
 import ForgotPassword from "./user/ForgotPassword";
+import Timeline from "./post/Timeline";
 
 const MainRouter = () => (
     <div>
@@ -20,7 +21,7 @@ const MainRouter = () => (
         <Switch> 
             {/** User is redirected to sign in page if not authenticated while visiting the following PrivateRoutes */}
             <Route exact path="/" component={Home}></Route>
-            
+            <PrivateRoute exact path="/timeline" component={Timeline}></PrivateRoute>
             <PrivateRoute exact path="/post/edit/:postId" component={EditPost}></PrivateRoute>
             <Route exact path="/users" component={Users}></Route>
             <Route exact path="/signup" component={Signup}></Route>

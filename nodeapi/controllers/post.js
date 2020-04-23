@@ -35,6 +35,25 @@ exports.postById = (req, res, next, id) => {
 //     .catch(err => console.log(err));
 // };
 
+exports.postsForTimeline = (req, res) => {
+     
+    let following = req.profile.following
+    following.push(req.profile._id)
+    Post.find({postedBy: { $in : req.profile.following } })
+    .populate('comments', 'text created')
+    .populate('comments.postedBy', '_id name')
+    .populate('postedBy', '_id name')
+    .sort('-created')
+    .exec((err, posts) => {
+      if (err) {
+        return res.status(400).json({
+          error: errorHandler.getErrorMessage(err)
+        })
+      }
+      res.json(posts)
+    })
+  }
+
 // Pagination: 3 posts per page
 exports.getPosts = async (req, res) => {
     // get current page from req.query or use default value of 1
@@ -189,3 +208,6 @@ exports.uncomment = (req,res) => {
         });
 
 }
+
+
+  
