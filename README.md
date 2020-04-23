@@ -16,17 +16,24 @@ http://localhost3000 should start automatically in your browswer, and you can ex
 
 ## Description
 
-"/api/signup": "signup",
-"/api/signin": "signin",
-"/api/signout": "signout",
-"/api/users": "get all users",
-"/api/user/:userId": "get/update/delete user",
-"/api/posts": "get all posts",
-"/api/post/new/:userId": "create new post",
-"/api/posts/by/:userId": "get posts by user",
+"/api/signup": "signup"
+
+"/api/signin": "signin"
+
+"/api/signout": "signout"
+
+"/api/users": "get all users"
+
+"/api/user/:userId": "get/update/delete user"
+
+"/api/posts": "get all posts"
+
+"/api/post/new/:userId": "create new post"
+
+"/api/posts/by/:userId": "get posts by user"
+
 "/api/post/:postId": "update/delete post"
 
-Notable features:
 
 
     
